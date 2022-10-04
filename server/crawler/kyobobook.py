@@ -1,8 +1,9 @@
 from bs4 import BeautifulSoup as bs
 import requests as req
 import pandas as pd
+import Elasticsearch
 
-
+es = Elasticsearch('http://localhost:9200')
 barcodes = ['9791188331796', '9788956601021', '9791185428673','9780553509977','9788934975137','9791161571379']
 url = 'https://search.kyobobook.co.kr/web/search?vPstrKeyWord={barcode}&orderClick=LAG'
 lst = []
@@ -19,4 +20,12 @@ for barcode in barcodes:
     lst.append(dict(image=image, category2=category2, title=title, author=author, publish=publish, published_date=published_date, price=price))
 
 print(pd.DataFrame(lst))
+
+for i, row in df.iterrows():
+    es.index(
+     index='bookstore',
+     document={'id':row['barcode'], 'barcode':row['barcode'], 'image':row['image']
+         , 'category2':row['category2'], 'title':row['title'], 'author':row['author']
+         , 'publish':row['publish'], 'published_date':row['published_date'], 'price':row['price']}
+    )
 
