@@ -1,5 +1,5 @@
 #install python package
-pip install redis flask pymysql gunicorn sqlalchemy gevent
+pip install redis flask pymysql gunicorn sqlalchemy gevent bs4 pandas
 
 #install nginx
 #sudo apt-get install nginx

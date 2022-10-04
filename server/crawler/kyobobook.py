@@ -1,4 +1,4 @@
-from bs4 import BeautifulSoup as bas
+from bs4 import BeautifulSoup as bs
 import requests as req
 import pandas as pd
 
@@ -18,5 +18,5 @@ for barcode in barcodes:
     price = tr.find('div',{'class':'org_price'}).text.strip()
     lst.append(dict(image=image, category2=category2, title=title, author=author, publish=publish, published_date=published_date, price=price))
 
-pd.DataFrame(lst)
+print(pd.DataFrame(lst))
 

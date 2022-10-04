@@ -25,5 +25,5 @@ for barcode in barcodes:
     category2 = dtl_doc.find('div', {'id':'infoset_goodsCate'}).find('ul', {'class':'yesAlertLi'}).find_all('a')[1].text.strip()
     lst.append(dict(image=image, category2=category2, title=title, author=author, publish=publish, published_date=published_date, price=price))
 
-df = pd.DataFrame(lst)
+print(pd.DataFrame(lst))
 
