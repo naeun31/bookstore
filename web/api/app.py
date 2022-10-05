@@ -18,20 +18,27 @@ from flask import Flask, g, request, jsonify, Blueprint, make_response, render_t
 import redis
 import json
 from sqlalchemy import create_engine
+#from elasticsearch import Elasticsearch
 
 
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
 try:
     app.config['db'] = redis.Redis(host='localhost', port=6379, db=0)
+    #app.config['es'] = Elasticsearch('http://localhost:9200/bookstore')
 except:
     app.config['db'] = redis.Redis(host='xxx.xxx.xxx.xxx', port=6379, db=0)
+    #app.config['es'] = Elasticsearch('http://localhost:9200/bookstore')
 
 
 @app.route('/')
 def hello_world():
     return 'Hello API!!!'
 
+@app.route('/search')
+def search():
+    pass
+    #return app.config['es'].search(query={'match':{'title':'공중그네'}})
 
 @app.route('/test', methods=['POST','GET'])
 def get_observation():
