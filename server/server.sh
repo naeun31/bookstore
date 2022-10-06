@@ -2,6 +2,13 @@
 pip install redis flask pymysql gunicorn sqlalchemy gevent bs4 pandas Elasticsearch
 
 #install nginx
+#파일생성
+#vi /etc/apt/sources.list.d/nginx.list
+## Replace $release with your corresponding Ubuntu release.
+deb https://nginx.org/packages/ubuntu/ $release nginx
+deb-src https://nginx.org/packages/ubuntu/ $release nginx
+
+#sudo apt-get update
 #sudo apt-get install nginx
 #vi ~/.profile
 #export NGINX_DOCROOT_IN_REPO=web/www
