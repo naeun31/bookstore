@@ -1,2 +1,2 @@
 # bookstore
-for mr. vertigo bookstore
+for Mr. vertigo bookstore
