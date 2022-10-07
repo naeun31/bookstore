@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>admin</title>
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
+    <!--<link rel="stylesheet" href="../fonts/xeicon/xeicon.css">-->
+    <link rel="stylesheet" href="../lib/bootstrap-4.2.1/css/bootstrap.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="wrap">
+        <div class="header">
+            <h2><b>B</b>ookStore <span>도서관리</span></h2>
+        </div>
+        <div class="inner">
+            <div class="row cont">
+                <div class="col-md-12 col-lg-8">
+                    <div class="list-head clear">
+                        
+                        <div class="toolbar clear">
+                            <div>
+                                <select name="" id="">
+                                    <option value="">서가번호</option>
+                                    <option value="">도서명</option>
+                                </select>
+                            </div>
+                            <div>
+                                <input type="text">
+                            </div>
+                            <div>
+                                <button><i class="xi-search"></i></button>
+                            </div>
+                        </div>
+                        <div class="btn-box">
+                            <button type="button" class="btn btn-dark" data-toggle="modal" data-target="#add">등록</button>
+                            <button type="button" class="btn btn-secondary">삭제</button>
+                        </div>
+                    </div>
+                    <div class="list bg-color">
+                        <ul class="">
+                            <li>
+                                <div class="tbl thead">
+                                    <div>
+                                        <div class="form-chk">
+                                            <input type="checkbox" name="" id="">
+                                        </div>
+                                    </div>
+                                    <div>제목</div>
+                                    <div>저자</div>
+                                    <div>가격</div>
+                                </div>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0)" class="tbl tbody">
+                                    <div>
+                                        <div class="form-chk">
+                                            <input type="checkbox" name="" id="">
+                                        </div>
+                                    </div>
+                                    <div>aa</div>
+                                    <div class="text-center">bb</div>
+                                    <div class="text-center">cc</div>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0)" class="tbl tbody">
+                                    <div>
+                                        <div class="form-chk">
+                                            <input type="checkbox" name="" id="">
+                                        </div>
+                                    </div>
+                                    <div>aa</div>
+                                    <div class="text-center">bb</div>
+                                    <div class="text-center">cc</div>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class=" col-md-12 col-lg-4">
+                    <div class="detail bg-color">
+                        <div class="form-box">
+                            <label for="">제목</label>
+                            <input type="text">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-8 col-sm-7">
+                                <div class="form-box">
+                                    <label for="">저자</label>
+                                    <input type="text">
+                                </div>
+                                <div class="form-box">
+                                    <label for="">출판사</label>
+                                    <input type="text">
+                                </div>
+                                <div class="form-box">
+                                    <label for="">서가번호</label>
+                                    <input type="text">
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-5">
+                                <div class="form-box">
+                                    <div class="img-box">
+                                        <label for="">이미지</label>
+                                        <div class="err-img">
+                                            <div>
+                                                <i class="xi-image-o"></i>
+                                                <p>Image Not Found</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="add" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalCenterTitle"><input type="text" class="form-control" placeholder="서가번호"></h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <textarea name="" id="" cols="30" rows="10" class="form-control"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-dark">등록</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    <script src="../lib/bootstrap-4.2.1/js/jquery-3.5.1.min.js"></script>
+    <script src="../lib/bootstrap-4.2.1/js/bootstrap.min.js"></script>
+</body>
+</html>
