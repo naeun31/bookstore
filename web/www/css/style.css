@@ -259,6 +259,54 @@ button:hover {
     
 }
 
+.search-wrap {
+    margin-top:20%;
+}
+.search-wrap h2 {
+    text-align: center;
+    font-weight:normal;
+    margin:0 0 15px;
+}
+.search-wrap h2 i {
+    font-size: 38px;
+    vertical-align: middle;
+    margin-top:-7px;
+    color: #331e0a;
+}
+.search-box {
+    margin:auto;
+    width: 500px;
+    border:1px solid #331e0a;
+    border-radius:25px;
+    font-size: 0;
+    overflow:hidden;
+}
+.search-box > * {
+    vertical-align: top;
+}
+.search-box input {
+    width:calc(100% - 50px);
+    border:0;
+    height:40px;
+    font-size: 17px;
+}
+.search-box button {
+    width: 50px;
+    line-height:40px;
+    font-size: 20px;
+    background-color: #331e0a;
+    color:#fff;
+}
+.admin {
+    position: fixed;
+    right: 10px;
+    top: 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    line-height:25px;
+    padding:0 15px;
+}
+
 @media (min-width: 576px) {
     .modal-dialog {
         max-width: 270px;
