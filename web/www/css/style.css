@@ -205,6 +205,9 @@ button:hover {
 .toolbar > div:nth-child(1) {
     width: 100px;
 }
+.toolbar > div:nth-child(3) {
+    width: 45px;
+}
 .toolbar select {
     border:0;
     width: 100%;
@@ -228,7 +231,8 @@ button:hover {
 
 }
 
-.img-box {
+.img-box img {
+    width: 100%;
 }
 .err-img {
     /* background: #eee; */

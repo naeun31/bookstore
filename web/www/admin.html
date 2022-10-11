@@ -19,23 +19,22 @@
             <div class="row cont">
                 <div class="col-md-12 col-lg-8">
                     <div class="list-head clear">
-                        
                         <div class="toolbar clear">
                             <div>
-                                <select name="" id="">
-                                    <option value="">서가번호</option>
-                                    <option value="">도서명</option>
+                                <select name="" id="searchOpt">
+                                    <option value="callNum">서가번호</option>
+                                    <option value="title">도서명</option>
                                 </select>
                             </div>
                             <div>
-                                <input type="text">
+                                <input type="text" id="keyword">
                             </div>
                             <div>
-                                <button><i class="xi-search"></i></button>
+                                <button id="search"><i class="xi-search"></i></button>
                             </div>
                         </div>
                         <div class="btn-box">
-                            <button type="button" class="btn btn-dark" data-toggle="modal" data-target="#add">등록</button>
+                            <button type="button" id="showModal" class="btn btn-dark" data-toggle="modal" data-target="#add">등록</button>
                             <button type="button" class="btn btn-secondary">삭제</button>
                         </div>
                     </div>
@@ -53,102 +52,13 @@
                                     <div>가격</div>
                                 </div>
                             </li>
+                        </ul>
+                        <ul id="searchList">
                             <li>
                                 <a href="javascript:void(0)" class="tbl tbody">
-                                    <div>
-                                        <div class="form-chk">
-                                            <input type="checkbox" name="" id="">
-                                        </div>
-                                    </div>
-                                    <div>돈의 속성 (200쇄 리커버 에디션, 양장)</div>
-                                    <div class="text-center">김승호 (지은이)</div>
-                                    <div class="text-center">17,800원<div>
+                                    <div class="text-center">검색결과가 없습니다.</div>
                                 </a>
                             </li>
-                            <li>
-                                <a href="javascript:void(0)" class="tbl tbody">
-                                    <div>
-                                        <div class="form-chk">
-                                            <input type="checkbox" name="" id="">
-                                        </div>
-                                    </div>
-                                    <div>공중그네</div>
-                                    <div class="text-center">오쿠다 히데오 (지은이), 이영미 (옮긴이)</div>
-                                    <div class="text-center">810</div>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0)" class="tbl tbody">
-                                    <div>
-                                        <div class="form-chk">
-                                            <input type="checkbox" name="" id="">
-                                        </div>
-                                    </div>
-                                    <div>아들러 성격 상담소</div>
-                                    <div class="text-center">기시미 이치로 (지은이), 이영미 (옮긴이)</div>
-                                    <div class="text-center">15,800원<div>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0)" class="tbl tbody">
-                                    <div>
-                                        <div class="form-chk">
-                                            <input type="checkbox" name="" id="">
-                                        </div>
-                                    </div>
-                                    <div>공중그네</div>
-                                    <div class="text-center">오쿠다 히데오 (지은이), 이영미 (옮긴이)</div>
-                                    <div class="text-center">810</div>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0)" class="tbl tbody">
-                                    <div>
-                                        <div class="form-chk">
-                                            <input type="checkbox" name="" id="">
-                                        </div>
-                                    </div>
-                                    <div>돈의 속성 (200쇄 리커버 에디션, 양장)</div>
-                                    <div class="text-center">김승호 (지은이)</div>
-                                    <div class="text-center">17,800원<div>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0)" class="tbl tbody">
-                                    <div>
-                                        <div class="form-chk">
-                                            <input type="checkbox" name="" id="">
-                                        </div>
-                                    </div>
-                                    <div>공중그네</div>
-                                    <div class="text-center">오쿠다 히데오 (지은이), 이영미 (옮긴이)</div>
-                                    <div class="text-center">810</div>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0)" class="tbl tbody">
-                                    <div>
-                                        <div class="form-chk">
-                                            <input type="checkbox" name="" id="">
-                                        </div>
-                                    </div>
-                                    <div>돈의 속성 (200쇄 리커버 에디션, 양장)</div>
-                                    <div class="text-center">김승호 (지은이)</div>
-                                    <div class="text-center">17,800원<div>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0)" class="tbl tbody">
-                                    <div>
-                                        <div class="form-chk">
-                                            <input type="checkbox" name="" id="">
-                                        </div>
-                                    </div>
-                                    <div>공중그네</div>
-                                    <div class="text-center">오쿠다 히데오 (지은이), 이영미 (옮긴이)</div>
-                                    <div class="text-center">810</div>
-                                </a>
-                            </li>                                                                                    
                         </ul>
                     </div>
                 </div>
@@ -185,11 +95,14 @@
                                 <div class="form-box">
                                     <div class="img-box">
                                         <label for="">이미지</label>
-                                        <div class="err-img">
+                                        <img src="https:\/\/image.aladin.co.kr\/product\/28884\/59\/cover200\/k962836509_3.jpg" width=""/>
+                                        <!-- <div class="err-img">
                                             <div>
-                                                <img src="https:\/\/image.aladin.co.kr\/product\/28884\/59\/cover200\/k962836509_3.jpg" width="160px"/>
+                                                <i class="xi-image-o"></i>
+                                                <p>Image Not Found</p>
+                                                
                                             </div>
-                                        </div>
+                                        </div> -->
                                     </div>
                                 </div>
                             </div>
@@ -200,11 +113,11 @@
         </div>
     </div>
     <!-- Modal -->
-    <div class="modal fade" id="add" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal fade" id="add" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalCenterTitle"><input type="text" class="form-control" placeholder="서가번호"></h5>
+              <h5 class="modal-title"><input type="text" id="callNum" class="form-control" placeholder="서가번호"></h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
@@ -222,5 +135,90 @@
       </div>
     <script src="../lib/bootstrap-4.2.1/js/jquery-3.5.1.min.js"></script>
     <script src="../lib/bootstrap-4.2.1/js/bootstrap.min.js"></script>
+    <script>
+        let json = [{
+            barcode:'9791188331796',
+            image:'https://shopping-phinf.pstatic.net/main_324409',
+            title:'돈의 속성 (200쇄 리커버 에디션, 양장)',
+            category2:'경제/경영',
+            publish:'승호',
+            author:'승호',
+            published_date:'2020.06.15.',
+            price:'1,000'
+        },
+        {
+            barcode:'9791188331796',
+            image:'https://shopping-phinf.pstatic.net/main_324555',
+            title:'공중그네',
+            category2:'경제/경영',
+            publish:'오쿠다 히데오',
+            author:'오쿠다 히데오',
+            published_date:'2020.06.15.',
+            price:'1,000'
+        },
+        {
+            barcode:'9791188331796',
+            image:'https://shopping-phinf.pstatic.net/main_324452',
+            title:'돈의 속성2 (200쇄 리커버 에디션, 양장)',
+            category2:'경제/경영',
+            publish:'기시미 이치로',
+            author:'기시미 이치로',
+            published_date:'2020.06.15.',
+            price:'1,000'
+        }]
+        function App() {
+            App.books = [];
+            const addBook = function() {
+                const $searchOpt = $('#searchOpt').val();
+                const $keyword = $('#keyword').val();
+            }
+            const searchList = function() {
+                if(!$('#keyword').val().replace(/\s/gi, "")) {
+                    alert('검색어를 입력해주세요');
+                    return;
+                }
+                App.books.push(json);
+                $("#searchList").empty();
+                template(App.books[0], "#searchList");
+            }
+
+            const template = function(items, el) {
+                let $li;
+                for (item of items) {
+                    $li = `<li>
+                            <a href="javascript:void(0)" class="tbl tbody">
+                                <div>
+                                    <div class="form-chk">
+                                        <input type="checkbox" name="" id="">
+                                    </div>
+                                </div>
+                                <div>${item.title}</div>
+                                <div class="text-center">${item.author}</div>
+                                <div class="text-center">${item.price}</div>
+                            </a>
+                        </li>`
+                    $(el).append($li);
+                }
+            }
+            
+            $("#showModal").on("click", function(){
+                const $keyword = $("#keyword").val();
+                const $searchOpt = $("#searchOpt").val();
+                if($searchOpt === "callNum") {
+                    $("#callNum").val($keyword);
+                }
+            })
+            $("#search").on("click", searchList);
+            $("#keyword").on("keypress", function(e){
+                const $keyword = $("#keyword").val();
+                if(e.key !== "Enter") {
+                    return;
+                }
+                searchList();
+            })
+        }
+        const app = new App();
+        
+    </script>
 </body>
 </html>
