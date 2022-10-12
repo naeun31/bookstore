@@ -93,6 +93,7 @@ button:hover {
     height: 35px;
     border:0;
     border-radius: 4px;
+    background-color: #f3f8fb;
 }
 .tbl {
     display: table;
@@ -185,6 +186,7 @@ button:hover {
 }
 .detail {
     padding-top: 30px;
+    border:1px solid #eee;
 }
 .bg-color {
     background: #f3f8fb;
@@ -192,7 +194,7 @@ button:hover {
 .toolbar {
     font-size: 0;
     display: table;
-    width: 500px;
+    width: calc(100% - 200px);
     border-radius: 4px;
     background: #fff;
     overflow: hidden;
@@ -231,8 +233,12 @@ button:hover {
 
 }
 
+.img-box {
+    border:1px solid #eee;
+}
 .img-box img {
     width: 100%;
+    display: none;
 }
 .err-img {
     /* background: #eee; */
@@ -355,6 +361,9 @@ button:hover {
     .tbl.tbody > div {
         display: inline-block;
     }
+    .tbl.tbody > div.no-data {
+        width:100%;
+    }
     .tbl.thead > div:not(:first-child) {
         display: none;
     }
@@ -379,8 +388,8 @@ button:hover {
     .tbl.tbody > div:nth-child(4) {
         text-align: right !important;
     }
-    .tbl.tbody > div:nth-child(4):before {
+    /* .tbl.tbody > div:nth-child(4):before {
         content:'\20A9';
         margin-right:3px;
-    }
+    } */
 }

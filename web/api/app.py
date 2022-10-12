@@ -53,6 +53,11 @@ def get_observation():
     except Exception as e:
         return jsonify(dict(result='fail', data=None, msg=str(e)))
 
+@app.route('/api/add_books', methods=['POST'])
+def add_books():
+    params = request.form
+    print(params)
+    return '1'
 
 if __name__ == '__main__':
     app.run(debug=True)

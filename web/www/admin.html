@@ -17,12 +17,12 @@
         </div>
         <div class="inner">
             <div class="row cont">
-                <div class="col-md-12 col-lg-8">
+                <div class="col-md-12 col-lg-7">
                     <div class="list-head clear">
                         <div class="toolbar clear">
                             <div>
                                 <select name="" id="searchOpt">
-                                    <option value="callNum">서가번호</option>
+                                    <option value="shelfNum">서가번호</option>
                                     <option value="title">도서명</option>
                                 </select>
                             </div>
@@ -54,55 +54,60 @@
                             </li>
                         </ul>
                         <ul id="searchList">
-                            <li>
+                            <li class="">
                                 <a href="javascript:void(0)" class="tbl tbody">
-                                    <div class="text-center">검색결과가 없습니다.</div>
+                                    <div class="no-data text-center">검색결과가 없습니다.</div>
                                 </a>
                             </li>
                         </ul>
                     </div>
                 </div>
-                <div class=" col-md-12 col-lg-4">
-                    <div class="detail bg-color">
-                        <div class="form-box">
-                            <label for="">제목</label>
-                            <input type="text" value="돈의 속성 (200쇄 리커버 에디션, 양장)"/>
-                        </div>
+                <div class=" col-md-12 col-lg-5">
+                    <div class="detail">
                         <div class="row">
-                            <div class="col-md-8 col-sm-7">
-                                <div class="form-box">
-                                    <label for="">barcode</label>
-                                    <input type="text" value="9791188331796">
-                                </div>
-                                <div class="form-box">
-                                    <label for="">저자</label>
-                                    <input type="text" value="김승호 (지은이)">
-                                </div>
-                                <div class="form-box">
-                                    <label for="">출판사</label>
-                                    <input type="text" value="스노우폭스북스">
-                                </div>
-                                <div class="form-box">
-                                    <label for="">정가</label>
-                                    <input type="text" value="18,000원">
-                                </div>
-                                <div class="form-box">
-                                    <label for="">서가번호</label>
-                                    <input type="text" value="A101,C101">
-                                </div>
-                            </div>
-                            <div class="col-md-4 col-sm-5">
+                            <div class="col-3 col-md-4 col-sm-5">
                                 <div class="form-box">
                                     <div class="img-box">
-                                        <label for="">이미지</label>
                                         <img src="https:\/\/image.aladin.co.kr\/product\/28884\/59\/cover200\/k962836509_3.jpg" width=""/>
-                                        <!-- <div class="err-img">
+                                        <div class="err-img">
                                             <div>
                                                 <i class="xi-image-o"></i>
                                                 <p>Image Not Found</p>
                                                 
                                             </div>
-                                        </div> -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-9 col-md-8 col-sm-7">
+                                <div class="row">
+                                    <div class="form-box col-12">
+                                        <label for="">제목</label>
+                                        <input type="text" name="title" value=""/>
+                                    </div>
+                                    <div class="form-box col-6">
+                                        <label for="">barcode</label>
+                                        <input type="text" name="barcode" value="">
+                                    </div>
+                                    <div class="form-box col-6">
+                                        <label for="">저자</label>
+                                        <input type="text" name="author" value="">
+                                    </div>
+                                    <div class="form-box col-6">
+                                        <label for="">출판사</label>
+                                        <input type="text" name="publish" value="">
+                                    </div>
+                                    <div class="form-box col-6">
+                                        <label for="">출판일</label>
+                                        <input type="text" name="published_date" value="">
+                                    </div>
+                                    <div class="form-box col-6">
+                                        <label for="">정가</label>
+                                        <input type="text" name="price" value="">
+                                    </div>
+                                    <div class="form-box col-6">
+                                        <label for="">서가번호</label>
+                                        <input type="text" name="shelfNum" value="A101,C101">
                                     </div>
                                 </div>
                             </div>
@@ -117,18 +122,18 @@
         <div class="modal-dialog modal-dialog-centered" role="document">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title"><input type="text" id="callNum" class="form-control" placeholder="서가번호"></h5>
+              <h5 class="modal-title"><input type="text" id="shelfNum" class="form-control" placeholder="서가번호"></h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <textarea name="" id="" cols="30" rows="10" class="form-control"></textarea>
+                    <textarea name="" id="barcodes" cols="30" rows="10" class="form-control"></textarea>
                 </div>
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-dark">등록</button>
+              <button type="button" id="addBook" class="btn btn-dark">등록</button>
             </div>
           </div>
         </div>
@@ -136,48 +141,27 @@
     <script src="../lib/bootstrap-4.2.1/js/jquery-3.5.1.min.js"></script>
     <script src="../lib/bootstrap-4.2.1/js/bootstrap.min.js"></script>
     <script>
-        let json = [{
-            barcode:'9791188331796',
-            image:'https://shopping-phinf.pstatic.net/main_324409',
-            title:'돈의 속성 (200쇄 리커버 에디션, 양장)',
-            category2:'경제/경영',
-            publish:'승호',
-            author:'승호',
-            published_date:'2020.06.15.',
-            price:'1,000'
-        },
-        {
-            barcode:'9791188331796',
-            image:'https://shopping-phinf.pstatic.net/main_324555',
-            title:'공중그네',
-            category2:'경제/경영',
-            publish:'오쿠다 히데오',
-            author:'오쿠다 히데오',
-            published_date:'2020.06.15.',
-            price:'1,000'
-        },
-        {
-            barcode:'9791188331796',
-            image:'https://shopping-phinf.pstatic.net/main_324452',
-            title:'돈의 속성2 (200쇄 리커버 에디션, 양장)',
-            category2:'경제/경영',
-            publish:'기시미 이치로',
-            author:'기시미 이치로',
-            published_date:'2020.06.15.',
-            price:'1,000'
-        }]
         function App() {
             App.books = [];
+            App.book = {};
             const addBook = function() {
                 const $searchOpt = $('#searchOpt').val();
                 const $keyword = $('#keyword').val();
             }
             const searchList = function() {
-                if(!$('#keyword').val().replace(/\s/gi, "")) {
-                    alert('검색어를 입력해주세요');
-                    return;
-                }
-                App.books.push(json);
+                // if(!$('#keyword').val().replace(/\s/gi, "")) {
+                //     alert('검색어를 입력해주세요');
+                //     return;
+                // }
+                $.ajax({
+                    url:'./data.json',
+                    type:'GET',
+                    async:false,
+                    success:function(data){
+                        console.log('res >>', data)
+                        App.books.push(data);
+                    }
+                })
                 $("#searchList").empty();
                 template(App.books[0], "#searchList");
             }
@@ -185,7 +169,7 @@
             const template = function(items, el) {
                 let $li;
                 for (item of items) {
-                    $li = `<li>
+                    $li = `<li data-key=${item.barcode}>
                             <a href="javascript:void(0)" class="tbl tbody">
                                 <div>
                                     <div class="form-chk">
@@ -200,12 +184,33 @@
                     $(el).append($li);
                 }
             }
+            const viewDetail = function(obj) {
+                let $input = $(".detail input");
+                if(!App.book || !obj.image) {
+                    $(".err-img").show();
+                    $(".img-box img").hide();
+                } else {
+                    $(".err-img").hide();
+                    $(".img-box img").show();
+                }
+                
+                $(".img-box img").attr("src", obj.image);
+                $input.each(function(index, input) {
+                    input.value = '';
+                    for(i in obj) {
+                        if(input['name'] === i) {
+                            input.value = (obj[i]);
+                        }
+                    }
+                })
+            }
             
             $("#showModal").on("click", function(){
+                $("#shelfNum").val('');
                 const $keyword = $("#keyword").val();
                 const $searchOpt = $("#searchOpt").val();
-                if($searchOpt === "callNum") {
-                    $("#callNum").val($keyword);
+                if($searchOpt === "shelfNum") {
+                    $("#shelfNum").val($keyword);
                 }
             })
             $("#search").on("click", searchList);
@@ -215,6 +220,28 @@
                     return;
                 }
                 searchList();
+            })
+            $("#addBook").on("click", function() {
+                const data = {"shelfNum":$("#shelfNum").val(), "barcodes": $("#barcodes").val().split('\n')};
+                $.ajax({
+                    url:'/api/add_books',
+                    type:'POST',
+                    data:JSON.stringify(data),
+                    dataType : 'json',
+                    success:function(data){
+                        console.log(data)
+                    }
+                })
+            })
+
+            $(document).on("click", "#searchList li", function(e) {
+                for(book of App.books[0]) {
+                    if (e.currentTarget.dataset.key === book.barcode) {
+                        App.book = book;
+                        break;
+                    }
+                }
+                viewDetail(App.book);
             })
         }
         const app = new App();
