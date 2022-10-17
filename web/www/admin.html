@@ -463,8 +463,8 @@
             })
             $("#addBook").on("click", function() {
                 const data = {
-                    "shelfNum":['a101', 'b203'],//$("#shelfNum").val().replace(/ /g, '').split(',')
-                    "barcodes": ['9791188331796', '9791161571379', '9788932020693',]//$("#barcodes").val().split('\n')
+                    "shelfNum":$("#shelfNum").val().replace(/ /g, ''),
+                    "barcodes": $("#barcodes").val().split('\n')
                 };
                 $.ajax({
                     url:'/api/admin/add_books',
