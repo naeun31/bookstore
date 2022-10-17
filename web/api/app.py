@@ -18,11 +18,13 @@ from flask import Flask, g, request, jsonify, Blueprint, make_response, render_t
 import redis
 import json
 from sqlalchemy import create_engine
+from admin import admin_api
 #from elasticsearch import Elasticsearch
-
+from db import db_session
 
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
+app.register_blueprint(admin_api)
 try:
     app.config['db'] = redis.Redis(host='localhost', port=6379, db=0)
     #app.config['es'] = Elasticsearch('http://localhost:9200/bookstore')
@@ -31,7 +33,12 @@ except:
     #app.config['es'] = Elasticsearch('http://localhost:9200/bookstore')
 
 
-@app.route('/')
+@app.teardown_request
+def shutdown_session(exception=None):
+    db_session.remove()
+
+
+@app.route('/api')
 def hello_world():
     return 'Hello API!!!'
 
@@ -53,11 +60,6 @@ def get_observation():
     except Exception as e:
         return jsonify(dict(result='fail', data=None, msg=str(e)))
 
-@app.route('/api/add_books', methods=['POST'])
-def add_books():
-    params = request.form
-    print(params)
-    return '1'
 
 if __name__ == '__main__':
     app.run(debug=True)

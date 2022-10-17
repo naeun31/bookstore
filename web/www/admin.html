@@ -394,12 +394,12 @@
                 //     return;
                 // }
                 $.ajax({
-                    url:'./data.json',
+                    url:'/api/admin/get_book_list',
                     type:'GET',
                     async:false,
                     success:function(data){
                         console.log('res >>', data)
-                        App.books.push(data);
+                        App.books.push(data.result);
                     }
                 })
                 $("#searchList").empty();
@@ -462,14 +462,24 @@
                 searchList();
             })
             $("#addBook").on("click", function() {
-                const data = {"shelfNum":$("#shelfNum").val(), "barcodes": $("#barcodes").val().split('\n')};
+                const data = {
+                    "shelfNum":['a101', 'b203'],//$("#shelfNum").val().replace(/ /g, '').split(',')
+                    "barcodes": ['9791188331796', '9791161571379', '9788932020693',]//$("#barcodes").val().split('\n')
+                };
                 $.ajax({
-                    url:'/api/add_books',
+                    url:'/api/admin/add_books',
                     type:'POST',
                     data:JSON.stringify(data),
-                    dataType : 'json',
+                    contentType : 'application/json',
                     success:function(data){
                         console.log(data)
+                        if(data === 'exist') {
+                            alert('이미 등록된 상품입니다.')
+                            $("#barcodes").val('')
+                            return
+                        } else {
+                            searchList();
+                        }
                     }
                 })
             })
