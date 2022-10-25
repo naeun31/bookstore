@@ -1,0 +1,28 @@
+{
+    "mappings":{
+        "properties":{
+            "barcode":{
+                "type":"keyword"
+            },
+            "category2":{
+                "type":"text",
+                "analyzer":"nori"
+            },
+            "title":{
+                "type":"text",
+                "analyzer":"nori"
+            },
+            "author":{
+                "type":"text",
+                "analyzer":"nori"
+            },
+            "publish":{
+                "type":"text",
+                "analyzer":"nori"
+            },
+            "published_date":{
+                "type":"keyword"
+            }
+        }
+    }
+}
