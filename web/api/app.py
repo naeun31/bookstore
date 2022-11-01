@@ -21,6 +21,8 @@ from sqlalchemy import create_engine
 from admin import admin_api
 #from elasticsearch import Elasticsearch
 from db import db_session
+import sqlite3
+
 
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
@@ -28,6 +30,8 @@ app.register_blueprint(admin_api)
 try:
     app.config['db'] = redis.Redis(host='localhost', port=6379, db=0)
     #app.config['es'] = Elasticsearch('http://localhost:9200/bookstore')
+    app.config['sqlite'] = sqlite3.connect('../../bookstore.db')
+    app.config['cursor'] = app.config['sqlite'].cursor()
 except:
     app.config['db'] = redis.Redis(host='xxx.xxx.xxx.xxx', port=6379, db=0)
     #app.config['es'] = Elasticsearch('http://localhost:9200/bookstore')
@@ -59,6 +63,25 @@ def get_observation():
         return jsonify(dict(result='success', data=data, msg=''))
     except Exception as e:
         return jsonify(dict(result='fail', data=None, msg=str(e)))
+
+@app.route('/shelf', method=['POST','GET'])    
+def shelf():    
+    sql = """SELECT num FROM shelf order by num"""
+    return app.config['cursor'].execute(sql).fetchall()
+
+@app.route('/book', method=['POST','GET'])    
+def book():
+    if len(request.form) > 0:
+        request.args= request.form    
+    sql = """SELECT * FROM book WHERE barcode = :barcode"""
+    return app.config['cursor'].execute(sql, {'barcode':args['barcode']}).fetchall()
+
+@app.route('/bookshelf', method=['POST','GET'])    
+def bookshelf():
+    if len(request.form) > 0:
+        request.args= request.form    
+    sql = """SELECT a.num, b.* FROM bookshelf a, book b WHERE a.barcode = b.barcode AND a.num = :num order by num, published_date DESC, title, publish"""
+    return app.config['cursor'].execute(sql, {'num':args['num']).fetchall()
 
 
 if __name__ == '__main__':
