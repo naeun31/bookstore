@@ -81,7 +81,6 @@ def shelf():
     sql = """SELECT num FROM shelf order by num"""   
     return get_db().cursor().execute(sql).fetchall()
 
-
 @app.route('/api/book', methods=['POST','GET'])    
 def book():
     if len(request.form) > 0:
