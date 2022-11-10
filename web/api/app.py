@@ -31,6 +31,7 @@ try:
     app.config['db'] = redis.Redis(host='localhost', port=6379, db=0)
     #app.config['es'] = Elasticsearch('http://localhost:9200/bookstore')
     app.config['sqlite'] = sqlite3.connect('../../bookstore.db')
+    app.config['sqlite'].row_factory = make_dicts    
     app.config['cursor'] = app.config['sqlite'].cursor()
 except:
     app.config['db'] = redis.Redis(host='xxx.xxx.xxx.xxx', port=6379, db=0)
@@ -46,12 +47,12 @@ def shutdown_session(exception=None):
 def hello_world():
     return 'Hello API!!!'
 
-@app.route('/search')
+@app.route('/api/search')
 def search():
     pass
     #return app.config['es'].search(query={'match':{'title':'공중그네'}})
 
-@app.route('/test', methods=['POST','GET'])
+@app.route('/api/test', methods=['POST','GET'])
 def get_observation():
     try:
         db = current_app.config['db']
@@ -64,24 +65,30 @@ def get_observation():
     except Exception as e:
         return jsonify(dict(result='fail', data=None, msg=str(e)))
 
-@app.route('/shelf', method=['POST','GET'])    
+def make_dicts(cursor, row):
+    return dict((cur.description[idx][0], value)
+                for idx, value in enumerate(row))
+
+
+
+@app.route('/api/shelf', methods=['POST','GET'])    
 def shelf():    
     sql = """SELECT num FROM shelf order by num"""
     return app.config['cursor'].execute(sql).fetchall()
 
-@app.route('/book', method=['POST','GET'])    
+@app.route('/api/book', methods=['POST','GET'])    
 def book():
     if len(request.form) > 0:
         request.args= request.form    
     sql = """SELECT * FROM book WHERE barcode = :barcode"""
     return app.config['cursor'].execute(sql, {'barcode':args['barcode']}).fetchall()
 
-@app.route('/bookshelf', method=['POST','GET'])    
+@app.route('/api/bookshelf', methods=['POST','GET'])    
 def bookshelf():
     if len(request.form) > 0:
         request.args= request.form    
     sql = """SELECT a.num, b.* FROM bookshelf a, book b WHERE a.barcode = b.barcode AND a.num = :num order by num, published_date DESC, title, publish"""
-    return app.config['cursor'].execute(sql, {'num':args['num']).fetchall()
+    return app.config['cursor'].execute(sql, {'num':args['num']}).fetchall()
 
 #shelf insert
 def shelf_insert(num):
@@ -96,7 +103,7 @@ def shelf_insert(num):
 def shelf_delete(num):
     sql =  """SELECT COUNT(*) cnt FROM bookshelf WHERE num = :num"""
     if app.config['cursor'].execute(sql, {'num':num}).fetchone()[0] <= 0:
-    sql = """DELETE FROM shelf WHERE num = :num"""
+        sql = """DELETE FROM shelf WHERE num = :num"""
     try:
         app.config['cursor'].execute(sql, {'num':num})
         app.config['sqlite'].commit()
@@ -109,7 +116,7 @@ def book_insert(book):
         sql = "INSERT INTO book (" + ' ,'.join(book.keys()) + ") VALUES (:" + ' ,:'.join(book.keys()) + ")"
         app.config['cursor'].execute(sql, book)
         return True
-    Except:
+    except:
         return False
 
 #bookshelf insert
@@ -124,7 +131,7 @@ def bookshelf_insert(num, barcode):
         app.config['cursor'].execute(sql, book)
         app.config['sqlite'].commit()
         return True
-    Except:
+    except:
         return False
 
 
