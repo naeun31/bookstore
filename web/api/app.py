@@ -72,10 +72,8 @@ def hello_world():
 def search():
     sql = """SELECT * FROM book"""
     return get_db().cursor().execute(sql).fetchall()
-    pass
-    #return app.config['es'].search(query={'match':{'title':'공중그네'}})
-
-
+    #검색엔진사용
+    return current_app.config['es'].search(index='bookstore', query={'multi_match':{'query':request.args['q']}})    
 
 @app.route('/api/shelf', methods=['POST','GET'])    
 def shelf():    
@@ -123,6 +121,8 @@ def book_insert(book):
     try:
         sql = "INSERT INTO book (" + ' ,'.join(book.keys()) + ") VALUES (:" + ' ,:'.join(book.keys()) + ")"
         get_db().cursor().execute(sql, book)
+        #검색엔진 색인
+        #current_app.config['es'].index(index="bookstore", body=book, pretty=True, id=book['barcode'])
         return True
     except:
         return False
