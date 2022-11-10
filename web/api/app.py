@@ -93,7 +93,8 @@ def bookshelf():
     if len(request.form) > 0:
         request.args= request.form    
     sql = """SELECT a.num, b.* FROM bookshelf a, book b WHERE a.barcode = b.barcode AND a.num = :num order by num, published_date DESC, title, publish"""
-    return get_db().cursor().execute(sql, {'num':request.args['num']}).fetchall()
+    #return get_db().cursor().execute(sql, {'num':request.args['num']}).fetchall()
+    return jsonify(dict(result=get_db().cursor().execute(sql, {'num':request.args['num']}).fetchall()))
 
 #shelf insert
 def shelf_insert(num):

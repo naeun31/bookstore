@@ -8,23 +8,73 @@
     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
     <link rel="stylesheet" href="../lib/bootstrap-4.2.1/css/bootstrap.css">
     <link rel="stylesheet" href="../css/style.css">
+    <script src="../lib/bootstrap-4.2.1/js/jquery-3.5.1.min.js"></script>
 </head>
 <body>
     <div class="wrap">
         <div class="search-wrap">
             <h2><i class="xi-book"></i> 도서검색</h2>
             <div class="search-box">
-                <input type="text">
-                <button><i class="xi-search"></i></button>
+                <input type="text" id="q">
+                <button id="btn-search"><i class="xi-search"></i></button>
             </div>
         </div>
-        <div class="search-list">
-            
+        <div class="search-list" id="book-list">
         </div>
     </div>
     <a class="admin btn btn-secondary" href="./admin.html">admin</a>
 
     <style>
     </style>
+    <script>
+        function App() {
+            $(document).on("click", "#btn-search", function(e) {
+                $.ajax({
+                    url:'/api/search',
+                    type:'GET',
+                    data:{"q":$("#q").val()},
+                    contentType : 'application/json',
+                    success:function(data){
+                        console.log(data)
+                        if(data.length == 0){
+                            template(undefined, $("#book-list"))
+                        }else{
+                            template(data, $("#book-list"))
+                        }
+                    }
+                });
+            });
+            const template = function(items, el) {
+                let $li;
+                $(el).empty();
+                if(items==undefined){
+                    $li = `
+                        <ul style="padding:20px;">
+                            <div class="no-data text-center">검색결과가 없습니다.</div>
+                        </ul>`
+                    $(el).append($li);
+                }else{
+                    for (item of items) {
+                        $li = `<hr/>
+                            <ul style="padding:20px;" data-key=${item.barcode}>
+                                <li style="display: inline-block;"><img src="${item.image}" height="200px"></li>
+                                <li style="display: inline-block;font-weight: bold;font-size:20px;">${item.title}</li>
+                                <li style="display: inline-block;">/</li>
+                                <li style="display: inline-block;">${item.author}</li>
+                                <li style="display: inline-block;">/</li>
+                                <li style="display: inline-block;">${item.publish}</li>
+                                <li style="display: inline-block;">/</li>
+                                <li style="display: inline-block;">${item.published_date}</li>
+                                <li style="display: inline-block;">/</li>
+                                <li style="display: inline-block;">A101</li>
+                            </ul>`
+                        $(el).append($li);
+                    }
+                }
+            }
+        }
+        const app = new App();
+
+    </script>
 </body>
 </html>
