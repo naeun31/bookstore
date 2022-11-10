@@ -70,6 +70,8 @@ def hello_world():
 
 @app.route('/api/search')
 def search():
+    sql = """SELECT * FROM book"""
+    return get_db().cursor().execute(sql).fetchall()
     pass
     #return app.config['es'].search(query={'match':{'title':'공중그네'}})
 
