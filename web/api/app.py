@@ -73,19 +73,6 @@ def search():
     pass
     #return app.config['es'].search(query={'match':{'title':'공중그네'}})
 
-@app.route('/api/test', methods=['POST','GET'])
-def get_observation():
-    try:
-        db = current_app.config['db']
-        if len(request.form) > 0:
-            request.args= request.form
-        keys = request.args.to_dict().keys()
-        values = [json.loads(x.decode('utf-8')) if type(x)==bytes else [] for x in db.mget(keys)]
-        data = {k:v for k, v in zip(keys, values)}
-        return jsonify(dict(result='success', data=data, msg=''))
-    except Exception as e:
-        return jsonify(dict(result='fail', data=None, msg=str(e)))
-
 
 
 @app.route('/api/shelf', methods=['POST','GET'])    
