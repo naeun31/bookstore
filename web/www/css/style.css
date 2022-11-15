@@ -104,7 +104,7 @@ button:hover {
 .tbl.thead {
     text-align: center;
 }
-.tbl.tbody:hover {
+ul:not(.main) .tbl.tbody:hover {
     background: #ebf1f5;
     text-decoration: none;
 }
@@ -126,6 +126,58 @@ button:hover {
 }
 .tbl > div:nth-child(4) {
     width: 120px;
+}
+.search-list.main.result {
+    opacity: 1;
+    visibility: visible;
+}
+.search-wrap .row {
+    opacity: 0;
+    visibility: hidden;
+    transition-duration: 0.3s;
+    transition-delay: 0.5s;
+}
+.search-list.main {
+    margin:30px 0 80px;
+}
+.search-wrap .row.result {
+    opacity: 1;
+    visibility: visible;
+}
+.search-result {
+    margin-top:50px;
+    font-size:14px;
+    border-bottom:1px solid #ccc;
+    padding:0 0 7px;
+}
+.search-result b {
+    color:#f30;
+}
+
+.search-result span,
+.search-result b {
+    font-size:17px;
+    font-weight: bold;
+}
+.main .tbl img {
+    width:100px;
+    
+}
+.main.search-list * {
+
+    color:#555;
+}
+.main .tbl {
+    font-size:14px;
+}
+.main .tbl h5 {
+    margin:15px 0 0;
+    font-size:14px; color:#f30;
+}
+.main .tbl h4,
+.main .tbl h3 {
+    font-size:15px;
+    margin:5px 0;
 }
 .wrap {
 
@@ -271,6 +323,10 @@ button:hover {
 
 .search-wrap {
     margin-top:20%;
+    transition:all 0.4s;
+}
+.search-wrap.result {
+    margin-top:5%;
 }
 .search-wrap h2 {
     text-align: center;
@@ -352,13 +408,28 @@ button:hover {
         padding:0;
         line-height: 40px;
     }
+    .search-wrap {
+        padding:0 15px;
+    }
 }
 
 @media (max-width: 575px) {
+    .search-wrap {
+        margin-top:5%;
+    }
+    .admin {
+        display: none;
+    }
+    .search-box {
+        width:100%;
+    }
+    .search-wrap h2 {
+        display: none;
+    }
     .tbl.tbody {
         display: block;
     }
-    .tbl.tbody > div {
+    ul:not(.main) .tbl.tbody > div {
         display: inline-block;
     }
     .tbl.tbody > div.no-data {

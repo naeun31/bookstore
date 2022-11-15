@@ -18,8 +18,13 @@
                 <input type="text" id="q">
                 <button id="btn-search"><i class="xi-search"></i></button>
             </div>
-        </div>
-        <div class="search-list" id="book-list">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 col-md-12">
+                    <div class="search-result"><b>'강아지'</b> 검색 결과 총 <span>40</span>건</div>
+                    <ul class="search-list main" id="book-list">
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
     <a class="admin btn btn-secondary" href="./admin.html">admin</a>
@@ -29,10 +34,11 @@
     <script>
         function App() {
             $(document).on("click", "#btn-search", function(e) {
+                $(".search-wrap").addClass("result")
                 $.ajax({
                     url:'/api/search',
                     type:'GET',
-                    data:{"q":$("#q").val()},
+                    data:{"q":$("#q").val().toLowerCase()},
                     contentType : 'application/json',
                     success:function(data){
                         console.log(data)
@@ -40,6 +46,7 @@
                             template(undefined, $("#book-list"))
                         }else{
                             template(data, $("#book-list"))
+                            $(".search-wrap .row").addClass("result")
                         }
                     }
                 });
@@ -49,25 +56,24 @@
                 $(el).empty();
                 if(items==undefined){
                     $li = `
-                        <ul style="padding:20px;">
+                        <li>
                             <div class="no-data text-center">검색결과가 없습니다.</div>
-                        </ul>`
+                        </li>`
                     $(el).append($li);
                 }else{
                     for (item of items) {
-                        $li = `<hr/>
-                            <ul style="padding:20px;" data-key=${item.barcode}>
-                                <li style="display: inline-block;"><img src="${item.image}" height="200px"></li>
-                                <li style="display: inline-block;font-weight: bold;font-size:20px;">${item.title}</li>
-                                <li style="display: inline-block;">/</li>
-                                <li style="display: inline-block;">${item.author}</li>
-                                <li style="display: inline-block;">/</li>
-                                <li style="display: inline-block;">${item.publish}</li>
-                                <li style="display: inline-block;">/</li>
-                                <li style="display: inline-block;">${item.published_date}</li>
-                                <li style="display: inline-block;">/</li>
-                                <li style="display: inline-block;">A101</li>
-                            </ul>`
+                        $li = `
+                            <li class="tbl tbody" data-key=${item.barcode}>
+                                <div><img src="${item.image}"></div>
+                                <div>
+                                    <h3>${item.title}</h3>
+                                    <span>${item.author}</span>
+                                    <span>${item.publish}</span>
+                                    <span>${item.published_date}</span>
+                                    <h5>${item.price}</h5>
+                                    <h4>도서위치 : ${item.shelf_num}A101</h4>
+                                </div>
+                            </li>`
                         $(el).append($li);
                     }
                 }
