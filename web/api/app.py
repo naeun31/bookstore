@@ -70,7 +70,7 @@ def hello_world():
 
 @app.route('/api/search')
 def search():
-    sql = """SELECT * FROM book"""
+    sql = """SELECT * FROM book ORDER BY published_date DESC"""
     return get_db().cursor().execute(sql).fetchall()
     #검색엔진사용
     return current_app.config['es'].search(index='bookstore', query={'multi_match':{'query':request.args['q']}})    
