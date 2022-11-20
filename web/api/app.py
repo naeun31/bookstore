@@ -17,10 +17,12 @@ import flask
 from flask import Flask, g, request, jsonify, Blueprint, make_response, render_template, current_app
 import redis
 import json
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, func
 from admin import admin_api
 #from elasticsearch import Elasticsearch
 from db import db_session
+import pandas as pd
+from model import *
 import sqlite3
 
 
@@ -70,6 +72,27 @@ def hello_world():
 
 @app.route('/api/search')
 def search():
+    limit = 5
+    page = request.args.get('page', default=1)
+    param = request.args.get('q')
+    search = "%{}%".format(param)
+    q = db_session.query(Book.barcode, Book.title, Book.author, Book.publish, Book.published_date, Book.category2, Book.image, Book.price, func.group_concat(BookShelf.num).label("num"))\
+                  .select_from(Book)\
+                  .outerjoin(BookShelf, Book.barcode == BookShelf.barcode)\
+                  .filter((Book.title.like(search)) | (Book.author.like(search)) | (Book.publish.like(search)))\
+                  .group_by(Book.barcode)\
+                  .order_by(Book.published_date.desc())\
+                #   .all()
+    total  = q.count()
+    q = q.limit(limit).offset((page-1)*limit)
+    result = []
+    try:  
+        lst = [r._asdict() for r in q]
+        df = pd.DataFrame(lst)
+        result = df.to_dict('records')
+    except:
+        pass
+    return jsonify(dict(result=result, total=total, keyword=param))
     sql = """SELECT * FROM book ORDER BY published_date DESC"""
     return get_db().cursor().execute(sql).fetchall()
     #검색엔진사용

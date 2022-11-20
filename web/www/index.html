@@ -23,6 +23,8 @@
                     <div class="search-result"><b>'강아지'</b> 검색 결과 총 <span>40</span>건</div>
                     <ul class="search-list main" id="book-list">
                     </ul>
+                    <ul class="pagination">
+                    </ul>
                 </div>
             </div>
         </div>
@@ -33,24 +35,43 @@
     </style>
     <script>
         function App() {
+            App.page = 1;
             $(document).on("click", "#btn-search", function(e) {
+                searchList();
+            });
+            $(document).on("click", ".pagination li", function(e) {
+                searchList();
+            });
+            $("#q").on("keypress", function(e){
+                if(e.key !== "Enter") {
+                    return;
+                }
+                searchList();
+            })
+            const searchList = function() {
                 $(".search-wrap").addClass("result")
                 $.ajax({
                     url:'/api/search',
                     type:'GET',
-                    data:{"q":$("#q").val().toLowerCase()},
-                    contentType : 'application/json',
+                    data:{'q':$("#q").val().toLowerCase()},
                     success:function(data){
                         console.log(data)
-                        if(data.length == 0){
-                            template(undefined, $("#book-list"))
+                        $(".search-wrap .row").addClass("result");
+                        $('.search-result b').text(data['keyword']);
+                        $('.search-result span').text(data['total']);
+                        if(data['result'].length == 0){
+                            template(undefined, $("#book-list"));
                         }else{
-                            template(data, $("#book-list"))
-                            $(".search-wrap .row").addClass("result")
+                            template(data['result'], $("#book-list"));
+                            pagination(data['total'], App.page, $('.pagination'));
+                        }
+
+                        if(!data['keyword']) {
+                            $('.search-result b').text('전체');
                         }
                     }
                 });
-            });
+            }
             const template = function(items, el) {
                 let $li;
                 $(el).empty();
@@ -71,11 +92,38 @@
                                     <span>${item.publish}</span>
                                     <span>${item.published_date}</span>
                                     <h5>${item.price}</h5>
-                                    <h4>도서위치 : ${item.shelf_num}A101</h4>
+                                    <h4>도서위치 : ${item.num}</h4>
                                 </div>
                             </li>`
                         $(el).append($li);
                     }
+                }
+            }
+            const pagination = function(total, page, el) {
+                const limit = 5;
+                const totalPage = Math.ceil(total / limit);
+                let currentPage = page;
+                const first = currentPage - (currentPage % limit) + 1;
+                let last = currentPage - (currentPage % limit) + limit;
+                if (last > totalPage) {
+                    last = totalPage;
+                }
+                // console.log(totalPage, currentPage, first, last)
+                let $li;
+                $(el).empty();
+                for (let i = first; i <= last; i++) {
+                    if(i == currentPage) {
+                        $li = `
+                        <li class="current" data-page=${i}>
+                            <a href="javascript:void(0)">${i}</a>
+                        </li>`
+                    } else {
+                        $li = `
+                        <li data-page=${i}>
+                            <a href="javascript:void(0)">${i}</a>
+                        </li>`
+                    }
+                    $(el).append($li);
                 }
             }
         }
