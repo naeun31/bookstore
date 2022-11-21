@@ -35,35 +35,37 @@
     </style>
     <script>
         function App() {
-            App.page = 1;
+            App.totalData;
+            App.limit = 5
+            App.pageCount = 5
+            App.currentPage = 1;
             $(document).on("click", "#btn-search", function(e) {
-                searchList();
-            });
-            $(document).on("click", ".pagination li", function(e) {
-                searchList();
+                searchList(1);
             });
             $("#q").on("keypress", function(e){
                 if(e.key !== "Enter") {
                     return;
                 }
-                searchList();
+                searchList(1);
             })
-            const searchList = function() {
+            const searchList = function(selectedPage) {
                 $(".search-wrap").addClass("result")
                 $.ajax({
                     url:'/api/search',
                     type:'GET',
-                    data:{'q':$("#q").val().toLowerCase()},
+                    data:{'q':$("#q").val().toLowerCase(),
+                          'page':selectedPage},
                     success:function(data){
                         console.log(data)
                         $(".search-wrap .row").addClass("result");
                         $('.search-result b').text(data['keyword']);
-                        $('.search-result span').text(data['total']);
+                        App.totalData = data['total'];
+                        $('.search-result span').text(App.totalData);
                         if(data['result'].length == 0){
                             template(undefined, $("#book-list"));
                         }else{
                             template(data['result'], $("#book-list"));
-                            pagination(data['total'], App.page, $('.pagination'));
+                            pagination(App.totalData, App.pageCount, selectedPage);
                         }
 
                         if(!data['keyword']) {
@@ -99,32 +101,49 @@
                     }
                 }
             }
-            const pagination = function(total, page, el) {
-                const limit = 5;
-                const totalPage = Math.ceil(total / limit);
-                let currentPage = page;
-                const first = currentPage - (currentPage % limit) + 1;
-                let last = currentPage - (currentPage % limit) + limit;
+            
+            const pagination = function(totalData, pageCount, currentPage) {
+                totalPage = Math.ceil(totalData / App.limit);
+                let first = currentPage - (currentPage % pageCount) + 1;
+                let last = currentPage - (currentPage % pageCount) + pageCount;
                 if (last > totalPage) {
                     last = totalPage;
                 }
-                // console.log(totalPage, currentPage, first, last)
+                if (currentPage % pageCount == 0) {
+                    last = currentPage;
+                    first = Math.floor((currentPage - 1) / pageCount) * pageCount + 1
+                }
+                let next = currentPage + 1;
+                let prev = currentPage - 1;
                 let $li;
-                $(el).empty();
+                $(".pagination").empty();
+                console.log('first:',first, 'last:',last, 'cur:',currentPage, 'totalp:',totalPage)
                 for (let i = first; i <= last; i++) {
                     if(i == currentPage) {
                         $li = `
-                        <li class="current" data-page=${i}>
-                            <a href="javascript:void(0)">${i}</a>
+                        <li class="current">
+                            <a href="#" data-page="${i}">${i}</a>
                         </li>`
                     } else {
                         $li = `
-                        <li data-page=${i}>
-                            <a href="javascript:void(0)">${i}</a>
+                        <li>
+                            <a href="#" data-page="${i}">${i}</a>
                         </li>`
                     }
-                    $(el).append($li);
+                    $(".pagination").append($li);
                 }
+                let $prev = `<li class="prev"><a href="#" data-page="${prev}"><i class="xi-angle-left-thin"></i></a></li>`
+                let $next = `<li class="next"><a href="#" data-page="${next}"><i class="xi-angle-right-thin"></i></a></li>`
+                $(".pagination").prepend($prev);
+                $(".pagination").append($next);
+                if (prev <= 0) $('.prev').hide();
+                if (next > totalPage) $('.next').hide();
+                $(".pagination li a").click(function () {
+                    let selectedPage = $(this).data('page');
+                    currentPage = selectedPage
+                    pagination(totalData, pageCount, currentPage);
+                    searchList(selectedPage);
+                });
             }
         }
         const app = new App();

@@ -502,3 +502,8 @@ ul:not(.main) .tbl.tbody:hover {
     width: 15px;
     line-height: 15px;
 }
+.pagination li.current a {
+    font-weight: bold;
+    color:#000;
+    font-size:17px;
+}

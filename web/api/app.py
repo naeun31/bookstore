@@ -73,7 +73,7 @@ def hello_world():
 @app.route('/api/search')
 def search():
     limit = 5
-    page = request.args.get('page', default=1)
+    page = int(request.args.get('page', default=1))
     param = request.args.get('q')
     search = "%{}%".format(param)
     q = db_session.query(Book.barcode, Book.title, Book.author, Book.publish, Book.published_date, Book.category2, Book.image, Book.price, func.group_concat(BookShelf.num).label("num"))\
