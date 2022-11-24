@@ -5,6 +5,8 @@ from model import *
 from aladin import crawling
 import pandas as pd
 from copy import copy
+from elasticsearch import Elasticsearch
+
 
 admin_api = Blueprint('admin', __name__)
 
@@ -23,14 +25,20 @@ def add_books():
             #print(i['barcode'])
             barcodes.remove(i['barcode'])
     #book master 미등록건 등록
-    if barcodes:       
+    if barcodes:
         books = crawling(barcodes)
         books.to_sql('book', engine, if_exists='append')
         db_session.commit()
+        es = Elasticsearch('http://localhost:9200')
+        for i, book in books.iterrows():
+            barcode = book.name
+            book = dict(book)
+            book['barcode'] = barcode
+            es.index(index="bookstore", body=book, pretty=True, id=barcode)
         return get_book_list()
     else:
         return 'exist'
-    
+
     """
     #서가등록여부 확인
     print('서가등록여부확인',shelf_num)
@@ -46,9 +54,9 @@ def add_books():
     for x in [dict(barcode=x, num=shelf_num) for x in params['barcodes']]:
         bookshelf = BookShelf(x)
         BookShelf.insert(bookshelf)
-    #db_session.commit() 
+    #db_session.commit()
     """
-    
+
 @admin_api.route('/api/admin/get_book_list', methods=['GET'])
 def get_book_list():
     bookList = to_dict(db_session.query(Book).all())
