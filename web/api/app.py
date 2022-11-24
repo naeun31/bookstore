@@ -12,22 +12,20 @@
 :DESC: Flask webapp
 
 """
+from elasticsearch import Elasticsearch
 import os
 import flask
 from flask import Flask, g, request, jsonify, Blueprint, make_response, render_template, current_app
 import redis
 import json
-from sqlalchemy import create_engine, func
+from sqlalchemy import create_engine
 from admin import admin_api
-#from elasticsearch import Elasticsearch
 from db import db_session
-import pandas as pd
-from model import *
 import sqlite3
 
 
 
-DATABASE = '/workspace/bookstore/bookstore.db'
+DATABASE = '/home/newtale/bookstore/bookstore.db'
 
 def get_db():
     db = getattr(g, '_database', None)
@@ -39,19 +37,23 @@ def get_db():
 def make_dicts(cursor, row):
     return dict((cursor.description[idx][0], value)
                 for idx, value in enumerate(row))
-
+def get_es():
+    es = getattr(g, '_es', None)
+    if es is None:
+        es = g._es = Elasticsearch('http://localhost:9200')
+    return es
 
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
 app.register_blueprint(admin_api)
 try:
     app.config['db'] = redis.Redis(host='localhost', port=6379, db=0)
-    #app.config['es'] = Elasticsearch('http://localhost:9200/bookstore')
+    app.config['es'] = Elasticsearch('http://localhost:9200')
     #app.config['sqlite'] = sqlite3.connect('bookstore.db')
     #g.db = sqlite3.connect("bookstore.db")
-    #g.db.row_factory = make_dicts    
+    #g.db.row_factory = make_dicts
     #g.cur = g.db.cursor()
-    #app.config['sqlite'].row_factory = make_dicts    
+    #app.config['sqlite'].row_factory = make_dicts
     #app.config['cursor'] = app.config['sqlite'].cursor()
 except Exception as e:
     print('error')
@@ -72,49 +74,28 @@ def hello_world():
 
 @app.route('/api/search')
 def search():
-    limit = 5
-    page = int(request.args.get('page', default=1))
-    param = request.args.get('q')
-    search = "%{}%".format(param)
-    q = db_session.query(Book.barcode, Book.title, Book.author, Book.publish, Book.published_date, Book.category2, Book.image, Book.price, func.group_concat(BookShelf.num).label("num"))\
-                  .select_from(Book)\
-                  .outerjoin(BookShelf, Book.barcode == BookShelf.barcode)\
-                  .filter((Book.title.like(search)) | (Book.author.like(search)) | (Book.publish.like(search)))\
-                  .group_by(Book.barcode)\
-                  .order_by(Book.published_date.desc())\
-                #   .all()
-    total  = q.count()
-    q = q.limit(limit).offset((page-1)*limit)
-    result = []
-    try:  
-        lst = [r._asdict() for r in q]
-        df = pd.DataFrame(lst)
-        result = df.to_dict('records')
-    except:
-        pass
-    return jsonify(dict(result=result, total=total, keyword=param))
-    sql = """SELECT * FROM book ORDER BY published_date DESC"""
-    return get_db().cursor().execute(sql).fetchall()
+    if len(request.form) > 0:
+        request.args= request.form
     #검색엔진사용
-    return current_app.config['es'].search(index='bookstore', query={'multi_match':{'query':request.args['q']}})    
+    return jsonify([x['_source'] for x in get_es().search(index='bookstore', query={'multi_match':{'query':request.args['q']}})['hits']['hits']])
 
-@app.route('/api/shelf', methods=['POST','GET'])    
-def shelf():    
+@app.route('/api/shelf', methods=['POST','GET'])
+def shelf():
     #return str(current_app.config.keys())
-    sql = """SELECT num FROM shelf order by num"""   
-    return get_db().cursor().execute(sql).fetchall()
+    sql = """SELECT num FROM shelf order by num"""
+    return jsonify(get_db().cursor().execute(sql).fetchall())
 
-@app.route('/api/book', methods=['POST','GET'])    
+@app.route('/api/book', methods=['POST','GET'])
 def book():
     if len(request.form) > 0:
-        request.args= request.form    
+        request.args= request.form
     sql = """SELECT * FROM book WHERE barcode = :barcode"""
-    return get_db().cursor().execute(sql, {'barcode':request.args['barcode']}).fetchall()
+    return jsonify(get_db().cursor().execute(sql, {'barcode':request.args['barcode']}).fetchall())
 
-@app.route('/api/bookshelf', methods=['POST','GET'])    
+@app.route('/api/bookshelf', methods=['POST','GET'])
 def bookshelf():
     if len(request.form) > 0:
-        request.args= request.form    
+        request.args= request.form
     sql = """SELECT a.num, b.* FROM bookshelf a, book b WHERE a.barcode = b.barcode AND a.num = :num order by num, published_date DESC, title, publish"""
     #return get_db().cursor().execute(sql, {'num':request.args['num']}).fetchall()
     return jsonify(dict(result=get_db().cursor().execute(sql, {'num':request.args['num']}).fetchall()))
@@ -167,4 +148,4 @@ def bookshelf_insert(num, barcode):
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0')
