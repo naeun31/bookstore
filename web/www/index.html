@@ -20,10 +20,8 @@
             </div>
             <div class="row justify-content-center">
                 <div class="col-lg-8 col-md-12">
-                    <div class="search-result"><b>'강아지'</b> 검색 결과 총 <span>40</span>건</div>
+                    <div class="search-result"><b id="keyword">''</b> 검색 결과 총 <span id="cnt"></span>건</div>
                     <ul class="search-list main" id="book-list">
-                    </ul>
-                    <ul class="pagination">
                     </ul>
                 </div>
             </div>
@@ -35,45 +33,25 @@
     </style>
     <script>
         function App() {
-            App.totalData;
-            App.limit = 5
-            App.pageCount = 5
-            App.currentPage = 1;
             $(document).on("click", "#btn-search", function(e) {
-                searchList(1);
-            });
-            $("#q").on("keypress", function(e){
-                if(e.key !== "Enter") {
-                    return;
-                }
-                searchList(1);
-            })
-            const searchList = function(selectedPage) {
+                $("#keyword").text($("#q").val());
                 $(".search-wrap").addClass("result")
                 $.ajax({
                     url:'/api/search',
                     type:'GET',
-                    data:{'q':$("#q").val().toLowerCase(),
-                          'page':selectedPage},
+                    data:{"q":$("#q").val().toLowerCase()},
+                    contentType : 'application/json',
                     success:function(data){
-                        console.log(data)
-                        $(".search-wrap .row").addClass("result");
-                        $('.search-result b').text(data['keyword']);
-                        App.totalData = data['total'];
-                        $('.search-result span').text(App.totalData);
-                        if(data['result'].length == 0){
-                            template(undefined, $("#book-list"));
+                        $("#cnt").text(data.length);
+                        if(data.length == 0){
+                            template(undefined, $("#book-list"))
                         }else{
-                            template(data['result'], $("#book-list"));
-                            pagination(App.totalData, App.pageCount, selectedPage);
-                        }
-
-                        if(!data['keyword']) {
-                            $('.search-result b').text('전체');
+                            template(data, $("#book-list"))
+                            $(".search-wrap .row").addClass("result")
                         }
                     }
                 });
-            }
+            });
             const template = function(items, el) {
                 let $li;
                 $(el).empty();
@@ -85,67 +63,31 @@
                     $(el).append($li);
                 }else{
                     for (item of items) {
+                        if(String(item.shelf_num) == 'null'){item.shelf_num=''};
                         $li = `
                             <li class="tbl tbody" data-key=${item.barcode}>
                                 <div><img src="${item.image}"></div>
                                 <div>
-                                    <h3>${item.title}</h3>
+                                    <h3><b>${item.title}</b></h3>
                                     <span>${item.author}</span>
-                                    <span>${item.publish}</span>
-                                    <span>${item.published_date}</span>
+                                    <span>${item.publish}</span><br/>
+                                    <span>${item.published_date}</span></br>
+                                    <span>${item.barcode}</span>
                                     <h5>${item.price}</h5>
-                                    <h4>도서위치 : ${item.num}</h4>
+                                    <h4>도서위치 : ${item.shelf_num}</h4>
                                 </div>
                             </li>`
                         $(el).append($li);
                     }
                 }
             }
-            
-            const pagination = function(totalData, pageCount, currentPage) {
-                totalPage = Math.ceil(totalData / App.limit);
-                let first = currentPage - (currentPage % pageCount) + 1;
-                let last = currentPage - (currentPage % pageCount) + pageCount;
-                if (last > totalPage) {
-                    last = totalPage;
+            $(document).on("keypress", "#q", function(e) {
+                if(event.key == 'Enter'){
+                     $("#btn-search").click();
                 }
-                if (currentPage % pageCount == 0) {
-                    last = currentPage;
-                    first = Math.floor((currentPage - 1) / pageCount) * pageCount + 1
-                }
-                let next = currentPage + 1;
-                let prev = currentPage - 1;
-                let $li;
-                $(".pagination").empty();
-                console.log('first:',first, 'last:',last, 'cur:',currentPage, 'totalp:',totalPage)
-                for (let i = first; i <= last; i++) {
-                    if(i == currentPage) {
-                        $li = `
-                        <li class="current">
-                            <a href="#" data-page="${i}">${i}</a>
-                        </li>`
-                    } else {
-                        $li = `
-                        <li>
-                            <a href="#" data-page="${i}">${i}</a>
-                        </li>`
-                    }
-                    $(".pagination").append($li);
-                }
-                let $prev = `<li class="prev"><a href="#" data-page="${prev}"><i class="xi-angle-left-thin"></i></a></li>`
-                let $next = `<li class="next"><a href="#" data-page="${next}"><i class="xi-angle-right-thin"></i></a></li>`
-                $(".pagination").prepend($prev);
-                $(".pagination").append($next);
-                if (prev <= 0) $('.prev').hide();
-                if (next > totalPage) $('.next').hide();
-                $(".pagination li a").click(function () {
-                    let selectedPage = $(this).data('page');
-                    currentPage = selectedPage
-                    pagination(totalData, pageCount, currentPage);
-                    searchList(selectedPage);
-                });
-            }
+            });
         }
+
         const app = new App();
 
     </script>
