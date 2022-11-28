@@ -51,9 +51,9 @@ try:
     app.config['es'] = Elasticsearch('http://localhost:9200')
     #app.config['sqlite'] = sqlite3.connect('bookstore.db')
     #g.db = sqlite3.connect("bookstore.db")
-    #g.db.row_factory = make_dicts
+    #g.db.row_factory = make_dicts    
     #g.cur = g.db.cursor()
-    #app.config['sqlite'].row_factory = make_dicts
+    #app.config['sqlite'].row_factory = make_dicts    
     #app.config['cursor'] = app.config['sqlite'].cursor()
 except Exception as e:
     print('error')
@@ -79,26 +79,31 @@ def search():
     #검색엔진사용
     return jsonify([x['_source'] for x in get_es().search(index='bookstore', query={'multi_match':{'query':request.args['q']}})['hits']['hits']])
 
-@app.route('/api/shelf', methods=['POST','GET'])
-def shelf():
-    #return str(current_app.config.keys())
-    sql = """SELECT num FROM shelf order by num"""
-    return jsonify(get_db().cursor().execute(sql).fetchall())
 
-@app.route('/api/book', methods=['POST','GET'])
+@app.route('/api/shelf', methods=['POST','GET'])    
+def shelf():    
+    #return str(current_app.config.keys())
+    #sql = """SELECT num FROM shelf order by num"""   
+    #return jsonify(get_db().cursor().execute(sql).fetchall())
+    return jsonify([x['_source'] for x in get_es().search(index='bookstore', query={'match':{'query':request.args['q']}})['hits']['hits']])
+
+@app.route('/api/book', methods=['POST','GET'])    
 def book():
     if len(request.form) > 0:
-        request.args= request.form
+        request.args= request.form    
     sql = """SELECT * FROM book WHERE barcode = :barcode"""
     return jsonify(get_db().cursor().execute(sql, {'barcode':request.args['barcode']}).fetchall())
 
-@app.route('/api/bookshelf', methods=['POST','GET'])
+@app.route('/api/bookshelf', methods=['POST','GET'])    
 def bookshelf():
     if len(request.form) > 0:
         request.args= request.form
-    sql = """SELECT a.num, b.* FROM bookshelf a, book b WHERE a.barcode = b.barcode AND a.num = :num order by num, published_date DESC, title, publish"""
-    #return get_db().cursor().execute(sql, {'num':request.args['num']}).fetchall()
-    return jsonify(dict(result=get_db().cursor().execute(sql, {'num':request.args['num']}).fetchall()))
+    if 'num' in request.args.keys():
+        sql = """SELECT a.num, b.* FROM bookshelf a, book b WHERE a.barcode = b.barcode AND a.num = :num order by num, published_date DESC, title, publish"""
+        return jsonify(dict(result=get_db().cursor().execute(sql, {'num':request.args['num']}).fetchall()))
+    elif 'title' in request.args.keys():
+        return jsonify({'result':[x['_source'] for x in get_es().search(index='bookstore', query={'multi_match':{'query':request.args['title']}})['hits']['hits']]})
+
 
 #shelf insert
 def shelf_insert(num):

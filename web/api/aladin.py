@@ -24,6 +24,5 @@ def crawling(barcodes):
         lst.append(dict(barcode=barcode, image=image, category2=category2, title=title, author=author, publish=publish, published_date=published_date, price=price))
 
     df = pd.DataFrame(lst)
-    df.set_index('barcode', inplace=True)
-
+    #df.set_index('barcode', inplace=True)
     return df

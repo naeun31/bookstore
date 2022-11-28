@@ -8,7 +8,7 @@ import os
 # SQLALCHEMY_DATABASE_URI = 'sqlite:///{}'.format(os.path.join(BASE_DIR, 'bookstore.db'))
 # SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-engine = create_engine('sqlite:////workspace/bookstore/bookstore.db', convert_unicode=True)
+engine = create_engine('sqlite:////home/newtale/bookstore/bookstore.db', convert_unicode=True)
 db_session = scoped_session(sessionmaker(autocommit=False,
                                          autoflush=False,
                                          bind=engine))

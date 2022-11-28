@@ -56,8 +56,8 @@ class BookShelf(Base, Model):
     barcode = Column(Text, primary_key=True)
 
     def __init__(self, *args, **kwargs):
-        keys = args[0].keys()
-        dct = args[0]
+        keys = kwargs.keys()
+        dct = kwargs
         self.num = dct['num'] if 'num' in keys else None
         self.barcode = dct['barcode'] if 'barcode' in keys else None
 
