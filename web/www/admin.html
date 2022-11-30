@@ -35,7 +35,7 @@
                         </div>
                         <div class="btn-box">
                             <button type="button" id="showModal" class="btn btn-dark" data-toggle="modal" data-target="#add">등록</button>
-                            <button type="button" class="btn btn-secondary">삭제</button>
+                            <button type="button" id="btn-delete" class="btn btn-secondary">삭제</button>
                         </div>
                     </div>
                     <div class="list bg-color">
@@ -44,7 +44,7 @@
                                 <div class="tbl thead">
                                     <div>
                                         <div class="form-chk">
-                                            <input type="checkbox" name="" id="">
+                                            <input type="checkbox" class="check_all" id="check_all">
                                         </div>
                                     </div>
                                     <div>제목</div>
@@ -73,13 +73,14 @@
                                             <div>
                                                 <i class="xi-image-o"></i>
                                                 <p>Image Not Found</p>
-                                                
+
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-9 col-md-8 col-sm-7">
+                                <form id="detail">
                                 <div class="row">
                                     <div class="form-box col-12">
                                         <label for="">제목</label>
@@ -87,7 +88,7 @@
                                     </div>
                                     <div class="form-box col-6">
                                         <label for="">barcode</label>
-                                        <input type="text" name="barcode" value="">
+                                        <input type="text" readonly name="barcode" value="">
                                     </div>
                                     <div class="form-box col-6">
                                         <label for="">저자</label>
@@ -108,12 +109,13 @@
 
                                     <div class="form-box col-6">
                                         <label for="">서가번호</label>
-                                        <input type="text" name="shelfNum" value="A101,C101">
+                                        <input type="text" name="shelf_num" value="">
                                     </div>
                                     <div class="form-box col-6">
-                                        <input type="button" name="btn_save" value="저장">
+                                        <input type="button" name="btn_save" id="btn_save" value="저장">
                                     </div>
                                 </div>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -169,7 +171,7 @@
                     data:data,
                     async:false,
                     success:function(data){
-                        console.log('res >>', data)
+                        //console.log('res >>', data)
                         if(data.result.length == 0){
                             template(undefined, "#searchList");
                         }else{
@@ -182,7 +184,7 @@
             }
 
             const template = function(items, el) {
-                console.log(items);
+                //console.log(items);
                 let $li;
                 $(el).empty();
                 if(items==undefined){
@@ -200,7 +202,7 @@
                                 <a href="javascript:void(0)" class="tbl tbody">
                                     <div>
                                         <div class="form-chk">
-                                            <input type="checkbox" name="" id="">
+                                            <input type="checkbox" value="${item.barcode}"  name="barcode">
                                         </div>
                                     </div>
                                     <div>${item.title}</div>
@@ -221,7 +223,7 @@
                     $(".err-img").hide();
                     $(".img-box img").show();
                 }
-                
+
                 $(".img-box img").attr("src", obj.image);
                 $input.each(function(index, input) {
                     input.value = '';
@@ -230,9 +232,10 @@
                             input.value = (obj[i]);
                         }
                     }
-                })
+                });
+                document.getElementById("btn_save").value = '저장';
             }
-            
+
             $("#showModal").on("click", function(){
                 $("#shelfNum").val('');
                 const $keyword = $("#keyword").val();
@@ -284,9 +287,57 @@
                 }
                 viewDetail(App.book);
             })
+
+            $("#btn-delete").on("click", function(e) {
+                if($("#searchOpt").val() != "shelfNum"){
+                    alert("서가번호조회에서만 삭제가 가능합니다");
+                    return;
+                }
+                var shelf_num = $("#keyword").val();
+                var barcodes = [];
+                $("input[name=barcode]:checked").each(function(i, val){
+                    barcodes.push($(val).val());
+                });
+                if(barcodes.length == 0){
+                    alert("선택된도서가 없습니다");
+                    return;
+                }
+                $.ajax({
+                    url:'/api/admin/remove_books',
+                    method:'post',
+                    dataType:'json',
+                    data:{"shelf_num":shelf_num, "barcodes":barcodes.join("|")},
+                    success:function(data){
+                        //console.log(data)
+                        searchList();
+                        $("#check_all").prop("checked",false);
+                    }
+                })
+            });
+
+            $("#check_all").on("click", function(e) {
+                if($("#check_all").prop("checked")==true){
+                    $("input[name=barcode]").prop("checked",true);
+                }else{
+                    $("input[name=barcode]").prop("checked",false);
+                }
+            });
+            $("#btn_save").on("click", function(e) {
+                data = {};
+                $("#detail").find("input[type=text]").each(function(i,e){
+                    data[e['name']] = e.value;
+                });
+                $.ajax({
+                    url:'/api/admin/save_book',
+                    method:'post',
+                    dataType:'json',
+                    data:data,
+                });
+                //$(console.log('save')
+            });
         }
         const app = new App();
-        
+
     </script>
 </body>
 </html>
