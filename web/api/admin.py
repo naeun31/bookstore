@@ -5,7 +5,7 @@ from model import *
 from aladin import crawling as aladin_crawling
 from kyobobook import crawling as kyobobook_crawling
 import pandas as pd
-from copy import copy 
+from copy import copy
 from elasticsearch import Elasticsearch
 
 
@@ -36,7 +36,7 @@ def add_books():
        book = dict(books.iloc[i])
        print(book)
        es.index(index="bookstore", body=book, pretty=True, id=book['barcode'])
-    #서가등록 
+    #서가등록
     if barcodes:
         for barcode in barcodes:
             doc = es.get(id=barcode, index='bookstore')['_source']
@@ -53,7 +53,7 @@ def add_books():
         return get_book_list()
     else:
         return 'exist'
-    
+
     """
     #서가등록여부 확인
     print('서가등록여부확인',shelf_num)
@@ -69,10 +69,40 @@ def add_books():
     for x in [dict(barcode=x, num=shelf_num) for x in params['barcodes']]:
         bookshelf = BookShelf(x)
         BookShelf.insert(bookshelf)
-    #db_session.commit() 
+    #db_session.commit()
     """
-    
+
 @admin_api.route('/api/admin/get_book_list', methods=['GET'])
 def get_book_list():
     bookList = to_dict(db_session.query(Book).all())
     return jsonify(dict(result=bookList))
+
+
+
+@admin_api.route('/api/admin/remove_books', methods=['POST'])
+def remove_books():
+    barcodes = set(request.form['barcodes'].split("|"))
+    shelf_num = request.form['shelf_num']
+    result = to_dict(db_session.query(Book).filter(Book.barcode.in_(barcodes)))
+    for i, r in enumerate(result):
+        r['shelf_num'] = str(r['shelf_num']).replace(', ' + shelf_num, '').replace(shelf_num, '')
+        result[i] = r
+    es = Elasticsearch('http://localhost:9200')
+    sql = "update book set shelf_num = ? where barcode = ?"
+    for data in result:
+        engine.execute(sql, (data['shelf_num'], data['barcode']))
+        es.index(index='bookstore', body=data, id=data['barcode'])
+    return {'result':True}
+
+@admin_api.route('/api/admin/save_book', methods=['POST'])
+def save_book():
+    p = dict(request.form)
+    sql = "update book set title=?, author=?, publish=?, published_date=?, price=?, shelf_num=? where barcode=?"
+    engine.execute(sql, (p['title'], p['author'], p['publish'], p['published_date'], p['price'], p['shelf_num'], p['barcode']) )
+    es = Elasticsearch('http://localhost:9200')
+    doc = es.get(index='bookstore', id='9791186009222')['_source']
+    doc.update(p)
+    es.index(index='bookstore', body=doc, id=doc['barcode'])
+    print(doc)
+    return {'result':True}
+
