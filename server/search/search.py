@@ -16,7 +16,7 @@ es.indices.create(index='bookstore', body=mapping)
 
 #book indexing
 sql = "select * from book"
-con = sqlite3.Connection('bookstore.db')
+con = sqlite3.Connection('../../bookstore.db')
 def make_dicts(cursor, row):
     return dict((cursor.description[idx][0], value)
                 for idx, value in enumerate(row))
@@ -28,12 +28,10 @@ data = cur.execute(sql).fetchall()
 for doc in data:
     doc_id = doc['barcode']
     es.index(index="bookstore", body=doc, pretty=True, id=doc_id)
+    print(doc['title'])
 
 #search test
 es.search(index='bookstore', query={'match':{'title':'지구별'}})
 
 es.search(index='bookstore', query={'multi_match':{'query':'김승호'}})
 
-
-
-	
